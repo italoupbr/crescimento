@@ -31,7 +31,12 @@ export const Step1Contact: React.FC<Step1Props> = ({ formData, setFormData, onNe
             'Content-Type': 'application/json',
           },
           body: JSON.stringify({
-            ...formData,
+            name: formData.name,
+            email: formData.email,
+            whatsapp: formData.whatsapp,
+            website: formData.website,
+            investment: formData.investment,
+            painPoint: formData.painPoint,
             submittedAt: new Date().toISOString(),
             source: 'diagnostico-ia'
           }),
