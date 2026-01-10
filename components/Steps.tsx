@@ -22,8 +22,12 @@ export const Step1Contact: React.FC<Step1Props> = ({ formData, setFormData, onNe
         const webhookUrl = import.meta.env.VITE_N8N_WEBHOOK_URL;
 
         if (!webhookUrl) {
-          throw new Error('N8N Webhook URL not configured');
+          console.warn('N8N Webhook URL not configured, proceeding anyway');
+          onNext();
+          return;
         }
+
+        console.log('Sending data to webhook:', webhookUrl);
 
         const response = await fetch(webhookUrl, {
           method: 'POST',
@@ -42,17 +46,22 @@ export const Step1Contact: React.FC<Step1Props> = ({ formData, setFormData, onNe
           }),
         });
 
+        console.log('Response status:', response.status);
+
         if (!response.ok) {
-          throw new Error('Failed to send data to n8n');
+          console.error('Webhook failed but proceeding:', response.status);
+        } else {
+          console.log('Data sent successfully!');
         }
 
+        // Sempre prossegue, mesmo se o webhook falhar
         onNext();
       } catch (error) {
-        console.error('Error saving data:', error);
-        alert("Ocorreu um erro ao salvar seus dados. Por favor, tente novamente.");
+        console.error('Error sending data:', error);
+        // Prossegue mesmo com erro para não bloquear o usuário
+        onNext();
       }
     } else {
-      // Feedback simples para garantir preenchimento
       alert("Por favor, preencha todos os campos para continuar.");
     }
   };
